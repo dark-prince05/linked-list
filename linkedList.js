@@ -1,9 +1,9 @@
-function linkedList() {
-  let list = Node();
+export function LinkedList() {
+  let list = null;
 
   function append(value) {
-    if (list.value === null) {
-      list.value = value;
+    if (!list) {
+      list = Node(value);
       return;
     }
 
@@ -16,6 +16,7 @@ function linkedList() {
 
   function prepend(value) {
     const newList = Node(value, list);
+
     list = newList;
   }
 
@@ -23,18 +24,18 @@ function linkedList() {
     let temp = list;
     let length = 0;
     while (temp !== null) {
-      if (temp.value) length++;
       temp = temp.nextNode;
+      length++;
     }
     return length;
   }
 
   function head() {
-    return list.value ? list : null;
+    return list ? list : null;
   }
 
   function tail() {
-    if (list.value === null) return null;
+    if (!list) return null;
     let temp = list;
     while (temp.nextNode !== null) {
       temp = temp.nextNode;
@@ -56,9 +57,9 @@ function linkedList() {
 
   function pop() {
     let temp = list;
-    if (list.value === null) return null;
-    if (list.value && list.nextNode === null) {
-      list.value = null;
+    if (!list) return null;
+    if (list.nextNode === null) {
+      list = null;
       return temp;
     }
     while (temp.nextNode.nextNode !== null) {
@@ -90,7 +91,7 @@ function linkedList() {
   }
 
   function toString() {
-    if (list.value == null) return null;
+    if (!list === null) return null;
     let temp = list;
     let res = "";
     while (temp !== null) {
@@ -98,7 +99,61 @@ function linkedList() {
       temp = temp.nextNode;
     }
     res += `null`;
-    console.log(res);
+    return res;
+  }
+
+  function inserAt(value, index = size()) {
+    if (index < 0 || index > size()) {
+      console.log("Error: Enter valid index");
+      return;
+    }
+    if (index === 0) {
+      prepend(value);
+      return;
+    }
+    if (index === size()) {
+      append(value);
+      return;
+    }
+
+    let ind = 1;
+    let temp = list;
+    while (temp !== null) {
+      if (index === ind) {
+        const newNode = Node(value, temp.nextNode);
+        temp.nextNode = newNode;
+        break;
+      }
+      temp = temp.nextNode;
+      ind++;
+    }
+  }
+
+  function removeAt(index) {
+    let temp = list;
+    if (index < 0 || index > size()) {
+      console.log("Error: Enter valid index");
+      return;
+    }
+    if (index === 0) {
+      list = list.nextNode;
+      const removedList = temp;
+      removedList.nextNode = null;
+      return removedList;
+    }
+    if (index === size() - 1) {
+      return pop();
+    }
+    let ind = 1;
+    while (temp != null) {
+      if (index === ind) {
+        const current = temp.nextNode;
+        temp.nextNode = current.nextNode;
+        break;
+      }
+      temp = temp.nextNode;
+      ind++;
+    }
   }
 
   return {
@@ -112,17 +167,10 @@ function linkedList() {
     contains,
     find,
     toString,
+    inserAt,
+    removeAt,
   };
 }
-const l = linkedList();
-// l.append(5);
-// l.append(9);
-// l.append(1);
-// l.prepend(178);
-// l.prepend(18);
-
-console.log(JSON.stringify(l.head()));
-console.log(l.toString());
 
 function Node(val = null, next = null) {
   return {
